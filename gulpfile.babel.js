@@ -3,9 +3,13 @@ import gulp, { series, parallel } from "gulp";
 import del from "del";
 import rename from "gulp-rename";
 import plumber from "gulp-plumber";
-import ghPages from "gulp-gh-pages";
 import browserSync from "browser-sync";
 import sourcemaps from "gulp-sourcemaps";
+
+import source from "vinyl-source-stream";
+import buffer from "vinyl-buffer";
+
+import image from "gulp-imagemin";
 
 import gpug from "gulp-pug";
 
@@ -13,37 +17,34 @@ import sass from "gulp-sass";
 import autoprefixer from "gulp-autoprefixer";
 import cleanCSS from "gulp-clean-css";
 
-import image from "gulp-imagemin";
-
-import source from "vinyl-source-stream";
-import buffer from "vinyl-buffer";
-
 import browserify from "browserify";
 import babelify from "babelify";
 import uglify from "gulp-uglify";
+
+import ghPages from "gulp-gh-pages";
 
 browserSync.create("browser");
 
 const paths = {
   pug: {
-    watch: "src/assets/views/**/*.pug",
-    src: "src/assets/views/*.pug",
+    watch: "src/views/**/*.pug",
+    src: "src/views/*.pug",
     dest: "dist",
   },
   img: {
-    watch: "src/assets/img/**/*",
-    src: "src/assets/img/*",
-    dest: "dist/static/img",
+    watch: "src/img/**/*",
+    src: "src/img/*",
+    dest: "dist/img",
   },
   scss: {
-    watch: "src/assets/scss/**/*.scss",
-    src: "src/assets/scss/styles.scss",
-    dest: "dist/static/css",
+    watch: "src/scss/**/*.scss",
+    src: "src/scss/styles.scss",
+    dest: "dist/css",
   },
   js: {
-    watch: "src/assets/js/**/*.js",
-    src: "src/assets/js/main.js",
-    dest: "dist/static/js",
+    watch: "src/js/**/*.js",
+    src: "src/js/main.js",
+    dest: "dist/js",
   },
 };
 
@@ -55,7 +56,7 @@ export const pug = () =>
     .pipe(gulp.dest(paths.pug.dest))
     .pipe(browserSync.stream());
 
-export const styles = () =>
+export const scss = () =>
   gulp
     .src(paths.scss.src)
     .pipe(plumber())
@@ -100,7 +101,7 @@ export const server = () =>
 
 export const watch = (cb) => {
   gulp.watch(paths.pug.watch, pug);
-  gulp.watch(paths.scss.watch, styles);
+  gulp.watch(paths.scss.watch, scss);
   gulp.watch(paths.js.watch, js);
   cb();
 };
@@ -109,7 +110,7 @@ export const gh = () => gulp.src("dist/**/*").pipe(ghPages());
 
 export const prepare = series([clean, img]);
 
-export const assets = series([pug, styles, js]);
+export const assets = series([pug, scss, js]);
 
 export const live = parallel([server, watch]);
 

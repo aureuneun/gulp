@@ -1,8 +1,0 @@
-@mixin link($word) {
-  text-decoration: none;
-  @if $word == "even" {
-    color: $green;
-  } @else {
-    color: $blue;
-  }
-}

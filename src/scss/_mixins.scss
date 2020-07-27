@@ -1,0 +1,23 @@
+@mixin link($word) {
+  text-decoration: none;
+  @if $word == "even" {
+    color: $green;
+  } @else {
+    color: $blue;
+  }
+}
+
+$iphoneMax: 600px;
+$ipadMax: 768px;
+
+@mixin responsive($device) {
+  @if $device == "iphone" {
+    @media screen and (max-width: $iphoneMax) {
+      @content;
+    }
+  } @else if $device == "ipad" {
+    @media screen and (max-width: $ipadMax) {
+      @content;
+    }
+  }
+}

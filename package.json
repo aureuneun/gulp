@@ -7,9 +7,9 @@
   "author": "kec",
   "license": "MIT",
   "scripts": {
-    "dev:assets": "gulp dev",
-    "build:assets": "gulp build",
-    "deploy:assets": "gulp deploy"
+    "start": "gulp dev",
+    "build": "gulp build",
+    "deploy": "gulp deploy"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
