@@ -12,6 +12,7 @@ import buffer from "vinyl-buffer";
 import image from "gulp-imagemin";
 
 import gpug from "gulp-pug";
+import htmlmin from "gulp-htmlmin";
 
 import sass from "gulp-sass";
 import autoprefixer from "gulp-autoprefixer";
@@ -29,6 +30,11 @@ const paths = {
   pug: {
     watch: "src/views/**/*.pug",
     src: "src/views/*.pug",
+    dest: "dist",
+  },
+  html: {
+    watch: "src/**/*.html",
+    src: "src/*.html",
     dest: "dist",
   },
   img: {
@@ -56,6 +62,13 @@ export const pug = () =>
     .pipe(gulp.dest(paths.pug.dest))
     .pipe(browserSync.stream());
 
+export const html = () =>
+  gulp
+    .src(paths.html.src)
+    .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(gulp.dest(paths.html.dest))
+    .pipe(browserSync.stream());
+
 export const scss = () =>
   gulp
     .src(paths.scss.src)
@@ -64,6 +77,7 @@ export const scss = () =>
     .pipe(sass().on("error", sass.logError))
     .pipe(autoprefixer({ cascade: false }))
     .pipe(cleanCSS())
+    .pipe(rename("styles.min.css"))
     .pipe(sourcemaps.write("./maps"))
     .pipe(gulp.dest(paths.scss.dest))
     .pipe(browserSync.stream());
@@ -101,6 +115,7 @@ export const server = () =>
 
 export const watch = (cb) => {
   gulp.watch(paths.pug.watch, pug);
+  gulp.watch(paths.html.watch, html);
   gulp.watch(paths.scss.watch, scss);
   gulp.watch(paths.js.watch, js);
   cb();
@@ -110,7 +125,7 @@ export const gh = () => gulp.src("dist/**/*").pipe(ghPages());
 
 export const prepare = series([clean, img]);
 
-export const assets = series([pug, scss, js]);
+export const assets = series([pug, html, scss, js]);
 
 export const live = parallel([server, watch]);
 
